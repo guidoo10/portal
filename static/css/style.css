@@ -3,6 +3,11 @@ body {
   color: #0c0c0c;
   background-color: #f8f8f8;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  outline: none;
 }
 
 /* header css starts */
