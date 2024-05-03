@@ -383,6 +383,7 @@ a:focus {
   height: 50px;
   z-index: 3;
   font-size: 22px;
+  top: 45%;
 }
 
 .slider_section .carousel_btn-box .carousel-control-prev,
@@ -390,7 +391,7 @@ a:focus {
   position: unset;
   width: 50px;
   height: 50px;
-  background-color: #03a7d3;
+  background-color: transparent;
   opacity: 1;
   font-size: 28px;
   -webkit-transition: all .3s;
@@ -399,8 +400,8 @@ a:focus {
 
 .slider_section .carousel_btn-box .carousel-control-prev:hover,
 .slider_section .carousel_btn-box .carousel-control-next:hover {
-  background-color: #ffffff;
-  color: #000000;
+  background-color: transparent;
+  color: #fff;
 }
 
 .about_section .row {
