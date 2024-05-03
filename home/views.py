@@ -19,39 +19,59 @@ def about(request):
 
 @login_required
 def oncall(request, message=''):
-    teams = []
+    directory = r'C:\Users\anjulsi\OneDrive - AMDOCS\Backup Folders\Desktop\djangoproject\Cloudportal\template\excel'
+    excel_files = [f for f in os.listdir(directory) if f.endswith('.xlsx')]
+    all_data = []  # Initialize the list
 
-    if request.method == 'POST':
-        shift_input = request.POST.get('shift')
-        shifts = [shift.strip() for shift in shift_input.split(',')]
+    for file in excel_files:
+        file_path = os.path.join(directory, file)
+        data = pd.read_excel(file_path, header=0)
+        data.columns = pd.to_datetime(data.columns, errors='ignore')
 
-        directory = r'C:\Users\anjulsi\OneDrive - AMDOCS\Backup Folders\Desktop\djangoproject\Cloudportal\template\excel'
+        print("Data after reading from file:")
+        print(data)
 
-        excel_files = [f for f in os.listdir(directory) if f.endswith('.xlsx')]
+        all_data.append(data)
 
-        all_data = []
+    all_data_df = pd.concat(all_data, ignore_index=True)
 
-        for file in excel_files:
-            file_path = os.path.join(directory, file)
-            data = pd.read_excel(file_path)
-            all_data.append(data)
+    print("All data combined:")
+    print(all_data_df)
 
-        all_data_df = pd.concat(all_data, ignore_index=True)
 
-        today = pd.to_datetime(datetime.today().strftime('%Y-%m-%d'))
 
-        filtered_data = all_data_df[(all_data_df['Shift'].str.lower().isin([shift.lower() for shift in shifts])) &
-                                    (all_data_df['Start Date'] <= today) & (all_data_df['End Date'] >= today)]
+    # Create a dictionary with shift times as keys and labels as values
+    shift_labels = {
+        '7 AM - 4 PM': 'Morning',
+        '9 AM - 6 PM': 'General',
+        '9 AM - 9 AM': 'On call',
+        '1 PM - 10 PM': 'Evening'
+    }
 
-        grouped_data = filtered_data.groupby('Team')
+# Get today's date
+    today = datetime.today().strftime('%a, %b %#d')
 
-        for team, data in grouped_data:
+# Filter data based on '9 AM - 9 AM' shift on today's date
+    if today in all_data_df.columns:
+    # Filter data based on '9 AM - 9 AM' shift on today's date
+        all_data_df[today] = all_data_df[today].map(shift_labels)
+        filtered_data = all_data_df[all_data_df[today] == 'On call']
+
+        print("Filtered data:")
+        print(filtered_data)
+
+    # Prepare data for rendering
+        teams = []
+        for index, row in filtered_data.iterrows():
             teams.append({
-                'team': team,
-                'data': data[['Name', 'Start Date', 'End Date', 'Contact', 'First Escalation', 'Second Escalation']].values.tolist()
-            })
+                'name': row.iloc[0],
+                'shift': row[today]
+        })
+    else:
+        print(f"No data for {today}")
+        teams = []
 
-    return render(request, 'oncall.html', {'message': message, 'teams': teams})
+    return render(request, 'oncall.html', {'teams': teams})
 
 def upload_file(request):
     if request.method == 'POST':
