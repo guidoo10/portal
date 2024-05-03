@@ -5,6 +5,30 @@ body {
   overflow-x: hidden;
 }
 
+/* header css starts */
+.header_section .container-fluid {
+  padding-right: 25px;
+  padding-left: 25px;
+}
+
+.header_section .custom_nav-container .navbar-nav .nav-item .nav-link {
+  padding: 3px 5px;
+  margin: 10px;
+  text-transform: capitalize;
+}
+
+.header_section .navbar-expand-lg .navbar-nav {
+  justify-content: flex-end;
+  flex: 1 0 100%;
+  align-items: center;
+}
+
+.header_section .logout-btn,
+.header_section .logout-btn:hover {
+  color: #fff;
+}
+/* header css ends */
+
 .layout_padding {
   padding: 90px 0;
 }
