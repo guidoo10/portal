@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock title %}
+{% block body %}
+<style>
+    body {
+        background-color: #fafafa;
+    }
+
+    .card {
+        border-radius: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        border-radius: 20px 20px 0 0;
+        background-color: #405de6;
+        color: white;
+    }
+
+    .form-label {
+        font-weight: bold;
+    }
+
+    .input-group {
+        border: 1px solid #ced4da;
+        border-radius: 10px;
+        padding: 8px;
+    }
+
+    .input-group-text {
+        background-color: #f8f9fa;
+        border: none;
+    }
+
+    .btn-primary {
+        background-color: #405de6;
+        border-color: #405de6;
+        border-radius: 10px;
+        font-weight: bold;
+    }
+
+    .btn-primary:hover {
+        background-color: #314ba8;
+        border-color: #314ba8;
+    }
+
+    .btn-primary:focus {
+        box-shadow: 0 0 0 0.25rem rgba(64, 93, 230, 0.5);
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h2>Login</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text" id="basic-addon1"><i class="bi bi-person-fill"></i></span>
+                                {{ form.username }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text" id="basic-addon2"><i class="bi bi-lock-fill"></i></span>
+                                {{ form.password }}
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
