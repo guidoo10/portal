@@ -29,7 +29,7 @@ def oncall(request):
     for file in excel_files:
         file_path = os.path.join(directory, file)
         try:
-            data = pd.read_excel(file_path, header=0)
+            data = pd.read_excel(file_path, header=0, dtype=str)  # Add dtype=str parameter
             data.columns = pd.to_datetime(data.columns, errors='ignore')
             all_data.append(data)
         except Exception as e:
@@ -51,17 +51,17 @@ def oncall(request):
         '7 AM - 4 PM': 'Morning',
         '9 AM - 6 PM': 'General',
         '1 PM - 10 PM': 'Evening',
-        '9 AM - 9 AM': 'Oncall',
+        '9 AM - 9 AM': 'Oncall'
     }
 
     # Map names to their respective teams
     team_mapping = {
-        'Shweta Chopde': 'DevOps Team',
-        'Anjul Singh': 'Windows Team',
-        'Sonali Mohapatra': 'DevOps Team',
-        'Devi Vara Prasad Goddi': 'DevOps Team',
-        'Vaibhav Thodsare': 'DevOps Team',
-        'Rutuja Bajare': 'DevOps Team',
+        'Shweta Chopde': {'team': 'DevOps Team', 'first_escalation': first_escalation, 'second_escalation': second_escalation, 'third_escalation': third_escalation},
+        'Anjul Singh': {'team': 'Windows Team', 'first_escalation': first_escalation, 'second_escalation': second_escalation, 'third_escalation': third_escalation},
+        'Sonali Mohapatra': {'team': 'DevOps Team', 'first_escalation': first_escalation, 'second_escalation': second_escalation, 'third_escalation': third_escalation},
+        'Devi Vara Prasad Goddi': {'team': 'DevOps Team', 'first_escalation': first_escalation, 'second_escalation': second_escalation, 'third_escalation': third_escalation},
+        'Vaibhav Thodsare': {'team': 'DevOps Team', 'first_escalation': first_escalation, 'second_escalation': second_escalation, 'third_escalation': third_escalation},
+        'Rutuja Bajare': {'team': 'DevOps Team', 'first_escalation': first_escalation, 'second_escalation': second_escalation, 'third_escalation': third_escalation}
         # Add more mappings as needed
     }
 
@@ -88,9 +88,9 @@ def oncall(request):
 
         # Create a dictionary to store names for each team
         teams = {}
-        for name, team in team_mapping.items():
-            if team not in teams:
-                teams[team] = []
+        for name, team_info in team_mapping.items():
+            if team_info['team'] not in teams:
+                teams[team_info['team']] = {'members': [], 'first_escalation': team_info['first_escalation'], 'second_escalation': team_info['second_escalation'], 'third_escalation': team_info['third_escalation']}
         
         for index, row in all_data_df.iterrows():
             shift_value = str(row.iloc[column_index])
@@ -100,24 +100,16 @@ def oncall(request):
             if mapped_shift == shift:
                 name = row['Name']
                 if name in team_mapping:
-                    team = team_mapping[name]
-                    teams[team].append({'name': name, 'contact': int(row['Contact Number'])})
+                    team_info = team_mapping[name]
+                    teams[team_info['team']]['members'].append({'name': name, 'contact': row['Contact Number'], 'first_escalation': team_info['first_escalation'], 'second_escalation': team_info['second_escalation'], 'third_escalation': team_info['third_escalation']})
 
-        # Add static escalation values for all rows
-        first_escalations = [first_escalation] * len(teams)
-        second_escalations = [second_escalation] * len(teams)
-        third_escalations = [third_escalation] * len(teams)
-
-        team_lists = [{'team': team, 'members': members, 'first_escalation': first_escalation,
-                       'second_escalation': second_escalation, 'third_escalation': third_escalation}
-                      for team, members in teams.items()]
+        team_lists = [{'team': team, 'members': members['members'], 'first_escalation': members['first_escalation'], 'second_escalation': members['second_escalation'], 'third_escalation': members['third_escalation']} for team, members in teams.items()]
 
     else:
         messages.info(request, f"No data for {today_str}")
         team_lists = []
 
     return render(request, 'oncall.html', {'team_lists': team_lists})
-
 
 def upload_file(request):
     if request.method == 'POST':

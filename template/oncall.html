@@ -127,8 +127,8 @@
                 <button type="submit" class="btn btn-primary">View Shift</button>
             </form>
 
-            {% for team in team_lists %}
-            <h3>{{ team.team }}</h3>
+            {% for team_list in team_lists %}
+            <h3>{{ team_list.team }}</h3>
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
@@ -140,7 +140,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for member in team.members %}
+                    {% for member in team_list.members %}
                     <tr>
                         <td>{{ member.name }}</td>
                         <td>{{ member.contact }}</td>
@@ -155,6 +155,7 @@
         </div>
     </div>
 </div>
+
 
   <!-- jQuery -->
   <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
