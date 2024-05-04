@@ -89,7 +89,7 @@ def upload_file(request):
     if request.method == 'POST':
         try:
             myfile = request.FILES['myfile']
-            directory = r'C:\Users\anjulsi\OneDrive - AMDOCS\Backup Folders\Desktop\djangoproject\Cloudportal\template\excel'
+            directory = settings.EXCEL_FILES_DIR
             fs = FileSystemStorage(location=directory)
             filename = fs.save(myfile.name, myfile)
             messages.success(request, 'File uploaded successfully!')
