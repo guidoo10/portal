@@ -19,10 +19,12 @@ def about(request):
 
 @login_required
 
-def oncall(request, message=''):
-    directory = settings.EXCEL_FILES_DIR  # Assuming settings is imported
+def oncall(request):
+    directory = settings.EXCEL_FILES_DIR
     excel_files = [f for f in os.listdir(directory) if f.endswith('.xlsx')]
-    all_data = []  # Initialize the list
+    print("Excel files found:", excel_files)  # Debug output
+
+    all_data = []
 
     for file in excel_files:
         file_path = os.path.join(directory, file)
@@ -32,6 +34,10 @@ def oncall(request, message=''):
             all_data.append(data)
         except Exception as e:
             messages.error(request, f"Failed to read file {file}: {str(e)}")
+
+    if not all_data:
+        messages.error(request, "No data found in Excel files")  # Error message
+        return render(request, 'oncall.html')
 
     all_data_df = pd.concat(all_data, ignore_index=True)
 

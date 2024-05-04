@@ -132,4 +132,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 LOGOUT_REDIRECT_URL = '/'
-EXCEL_FILES_DIR = r'C:\Users\anjulsi\OneDrive - AMDOCS\Backup Folders\Desktop\djangoproject\Cloudportal\template\excel'
+EXCEL_FILES_DIR = r'C:\Users\shwetac\PycharmProjects\FinalProject\portal-main\Cloudportal\template\excel'
