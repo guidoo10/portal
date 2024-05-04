@@ -94,7 +94,6 @@
                 <button type="submit" class="custom-button">Upload</button>
             </form>
         </div>
-
     </header>
 
     {% for message in messages %}
@@ -119,15 +118,17 @@
             <form method="post">
                 {% csrf_token %}
                 <label for="shift">Select Shift:</label>
-                <select id="shift" name="shift">
+                <select id="shift" name="shift" class="custom-select">
                     <option value="Morning">Morning</option>
                     <option value="General">General</option>
                     <option value="Evening">Evening</option>
-                    <option value="OnCall">Oncall</option>
+                    <option value="OnCall">On Call</option>
                 </select>
-                <button type="submit">View Shift</button>
+                <button type="submit" class="btn btn-primary">View Shift</button>
             </form>
 
+            {% for team in team_lists %}
+            <h3>{{ team.team }}</h3>
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
@@ -139,20 +140,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for name, contact, first_escalation, second_escalation, third_escalation in teams %}
+                    {% for member in team.members %}
                     <tr>
-                        <td>{{ name }}</td>
-                        <td>{{ contact }}</td>
-                        <td>{{ first_escalation }}</td>
-                        <td>{{ second_escalation }}</td>
-                        <td>{{ third_escalation }}</td>
+                        <td>{{ member.name }}</td>
+                        <td>{{ member.contact }}</td>
+                        <td>{{ member.first_escalation }}</td>
+                        <td>{{ member.second_escalation }}</td>
+                        <td>{{ member.third_escalation }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            {% endfor %}
         </div>
     </div>
 </div>
+
   <!-- jQuery -->
   <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
   <!-- bootstrap js -->

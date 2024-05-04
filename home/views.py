@@ -51,7 +51,18 @@ def oncall(request):
         '7 AM - 4 PM': 'Morning',
         '9 AM - 6 PM': 'General',
         '1 PM - 10 PM': 'Evening',
-        '9 AM - 9 AM': 'Oncall'
+        '9 AM - 9 AM': 'Oncall',
+    }
+
+    # Map names to their respective teams
+    team_mapping = {
+        'Shweta Chopde': 'DevOps Team',
+        'Anjul Singh': 'Windows Team',
+        'Sonali Mohapatra': 'DevOps Team',
+        'Devi Vara Prasad Goddi': 'DevOps Team',
+        'Vaibhav Thodsare': 'DevOps Team',
+        'Rutuja Bajare': 'DevOps Team',
+        # Add more mappings as needed
     }
 
     # Convert today's date to string in the format "Sat, May 4"
@@ -75,31 +86,37 @@ def oncall(request):
 
         column_index = all_data_df.columns.get_loc(today_str)
 
-        names = []
-        contacts = []
-
+        # Create a dictionary to store names for each team
+        teams = {}
+        for name, team in team_mapping.items():
+            if team not in teams:
+                teams[team] = []
+        
         for index, row in all_data_df.iterrows():
             shift_value = str(row.iloc[column_index])
             if shift_value == 'nan':
                 continue
             mapped_shift = shift_labels.get(shift_value, None)
             if mapped_shift == shift:
-                names.append(row['Name'])
-                # Convert contact number to integer or string based on preference
-                contacts.append(str(int(row['Contact Number'])))  # Convert to string
+                name = row['Name']
+                if name in team_mapping:
+                    team = team_mapping[name]
+                    teams[team].append({'name': name, 'contact': int(row['Contact Number'])})
 
         # Add static escalation values for all rows
-        first_escalations = [first_escalation] * len(names)
-        second_escalations = [second_escalation] * len(names)
-        third_escalations = [third_escalation] * len(names)
+        first_escalations = [first_escalation] * len(teams)
+        second_escalations = [second_escalation] * len(teams)
+        third_escalations = [third_escalation] * len(teams)
 
-        teams = list(zip(names, contacts, first_escalations, second_escalations, third_escalations))
+        team_lists = [{'team': team, 'members': members, 'first_escalation': first_escalation,
+                       'second_escalation': second_escalation, 'third_escalation': third_escalation}
+                      for team, members in teams.items()]
+
     else:
         messages.info(request, f"No data for {today_str}")
-        teams = []
+        team_lists = []
 
-    return render(request, 'oncall.html', {'teams': teams})
-
+    return render(request, 'oncall.html', {'team_lists': team_lists})
 
 
 def upload_file(request):
