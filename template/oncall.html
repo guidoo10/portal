@@ -94,18 +94,7 @@
                 <button type="submit" class="custom-button">Upload</button>
             </form>
         </div>
-        <form method="post" action="{% url 'oncall' %}" class="form-inline d-flex justify-content-center mt-3" aria-label="Shift Form">
-            {% csrf_token %}
-            <div class="form-group mr-2">
-                <label for="shift" class="label-shift">Shift:</label>
-                <select id="shift" name="shift" class="custom-select">
-                    <option value="Morning">Morning</option>
-                    <option value="General">General</option>
-                    <option value="Evening">Evening</option>
-                </select>
-            </div>
-            <button type="submit" class="custom-button">View Shift</button>
-        </form>
+
     </header>
 
     {% for message in messages %}
@@ -122,43 +111,47 @@
     </div>
     {% endfor %}
 
-    {% for team in teams %}
-    <section class="card mb-4">
+    <div class="card mb-4">
         <div class="card-header">
-            <h2>{{ team.team }}</h2>
+            <h2>On-Call Information</h2>
         </div>
         <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <label for="shift">Select Shift:</label>
+                <select id="shift" name="shift">
+                    <option value="Morning">Morning</option>
+                    <option value="General">General</option>
+                    <option value="Evening">Evening</option>
+                    <option value="OnCall">Oncall</option>
+                </select>
+                <button type="submit">View Shift</button>
+            </form>
+
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Shift</th>
-                        <th>Team</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
                         <th>Contact</th>
                         <th>First Escalation</th>
                         <th>Second Escalation</th>
+                        <th>Third Escalation</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for row in team.data %}
+                    {% for name, contact, first_escalation, second_escalation, third_escalation in teams %}
                     <tr>
-                        <td>{{ row.0 }}</td>
-                        <td>{{ row.1 }}</td>
-                        <td>{{ row.2 }}</td>
-                        <td>{{ row.3 }}</td>
-                        <td>{{ row.4 }}</td>
-                        <td>{{ row.5 }}</td>
-                        <td>{{ row.6 }}</td>
-                        <td>{{ row.7 }}</td>
+                        <td>{{ name }}</td>
+                        <td>{{ contact }}</td>
+                        <td>{{ first_escalation }}</td>
+                        <td>{{ second_escalation }}</td>
+                        <td>{{ third_escalation }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-    </section>
-    {% endfor %}
+    </div>
 </div>
   <!-- jQuery -->
   <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
