@@ -56,6 +56,14 @@ def oncall(request):
 
     # Convert today's date to string in the format "Sat, May 4"
     today_str = datetime.today().strftime('%a, %b %d')
+    print("Today's date string:", today_str)
+
+    # Splitting date string to adjust the format
+    parts = today_str.split(', ')
+    date_parts = parts[1].split(' ')
+    day = date_parts[1].lstrip('0')  # Remove leading zero if present
+    today_str = f"{parts[0]}, {date_parts[0]} {day}"
+    print("Adjusted Today's date string:", today_str)
 
     if today_str in all_data_df.columns:
         if request.method == 'POST':
@@ -77,7 +85,8 @@ def oncall(request):
             mapped_shift = shift_labels.get(shift_value, None)
             if mapped_shift == shift:
                 names.append(row['Name'])
-                contacts.append(row['Contact Number'])
+                # Convert contact number to integer or string based on preference
+                contacts.append(str(int(row['Contact Number'])))  # Convert to string
 
         # Add static escalation values for all rows
         first_escalations = [first_escalation] * len(names)
@@ -90,6 +99,8 @@ def oncall(request):
         teams = []
 
     return render(request, 'oncall.html', {'teams': teams})
+
+
 
 def upload_file(request):
     if request.method == 'POST':
