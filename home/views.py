@@ -109,7 +109,10 @@ def oncall(request):
         messages.info(request, f"No data for {today_str}")
         team_lists = []
 
-    return render(request, 'oncall.html', {'team_lists': team_lists})
+    selected_shift = request.POST.get('shift', '') if request.method == 'POST' else ''
+
+    return render(request, 'oncall.html', {'team_lists': team_lists, 'selected_shift': selected_shift})
+
 
 def upload_file(request):
     if request.method == 'POST':

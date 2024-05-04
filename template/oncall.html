@@ -119,10 +119,10 @@
                 {% csrf_token %}
                 <label for="shift">Select Shift:</label>
                 <select id="shift" name="shift" class="custom-select">
-                    <option value="Morning">Morning</option>
-                    <option value="General">General</option>
-                    <option value="Evening">Evening</option>
-                    <option value="OnCall">On Call</option>
+                    <option value="Morning" {% if selected_shift == 'Morning' %} selected {% endif %}>Morning</option>
+                    <option value="General" {% if selected_shift == 'General' %} selected {% endif %}>General</option>
+                    <option value="Evening" {% if selected_shift == 'Evening' %} selected {% endif %}>Evening</option>
+                    <option value="OnCall" {% if selected_shift == 'OnCall' %} selected {% endif %}>On Call</option>
                 </select>
                 <button type="submit" class="btn btn-primary">View Shift</button>
             </form>
@@ -155,6 +155,7 @@
         </div>
     </div>
 </div>
+
 
 
   <!-- jQuery -->
