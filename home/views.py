@@ -18,57 +18,69 @@ def about(request):
     return render(request, 'about.html')
 
 @login_required
+
 def oncall(request, message=''):
-    directory = r'C:\Users\anjulsi\OneDrive - AMDOCS\Backup Folders\Desktop\djangoproject\Cloudportal\template\excel'
+    directory = settings.EXCEL_FILES_DIR  # Assuming settings is imported
     excel_files = [f for f in os.listdir(directory) if f.endswith('.xlsx')]
     all_data = []  # Initialize the list
 
     for file in excel_files:
         file_path = os.path.join(directory, file)
-        data = pd.read_excel(file_path, header=0)
-        data.columns = pd.to_datetime(data.columns, errors='ignore')
-
-        print("Data after reading from file:")
-        print(data)
-
-        all_data.append(data)
+        try:
+            data = pd.read_excel(file_path, header=0)
+            data.columns = pd.to_datetime(data.columns, errors='ignore')
+            all_data.append(data)
+        except Exception as e:
+            messages.error(request, f"Failed to read file {file}: {str(e)}")
 
     all_data_df = pd.concat(all_data, ignore_index=True)
 
-    print("All data combined:")
-    print(all_data_df)
+    # Define static values for first, second, and third escalation
+    first_escalation = "Shweta Chopde(9763958955),Anjul Singh(7275177775)"
+    second_escalation = "Praveen Kumar Tiwari (9972590103),Shivaji Bhosle(9689374727),Abhishek kumar singh (8586000516)"
+    third_escalation = "Sunil Kumar(9767831024)"
 
-
-
-    # Create a dictionary with shift times as keys and labels as values
+    # Define shift label mapping dictionary
     shift_labels = {
         '7 AM - 4 PM': 'Morning',
         '9 AM - 6 PM': 'General',
-        '9 AM - 9 AM': 'On call',
-        '1 PM - 10 PM': 'Evening'
+        '1 PM - 10 PM': 'Evening',
+        '9 AM - 9 AM': 'Oncall'
     }
 
-# Get today's date
-    today = datetime.today().strftime('%a, %b %#d')
+    # Convert today's date to string in the format "Sat, May 4"
+    today_str = datetime.today().strftime('%a, %b %d')
 
-# Filter data based on '9 AM - 9 AM' shift on today's date
-    if today in all_data_df.columns:
-    # Filter data based on '9 AM - 9 AM' shift on today's date
-        all_data_df[today] = all_data_df[today].map(shift_labels)
-        filtered_data = all_data_df[all_data_df[today] == 'On call']
+    if today_str in all_data_df.columns:
+        if request.method == 'POST':
+            shift = request.POST.get('shift', 'Morning')  # Default to Morning if no shift selected
+        else:
+            shift = "Morning"  # Default to Morning if no shift selected
 
-        print("Filtered data:")
-        print(filtered_data)
+        print("Selected shift:", shift)  # Debugging statement
 
-    # Prepare data for rendering
-        teams = []
-        for index, row in filtered_data.iterrows():
-            teams.append({
-                'name': row.iloc[0],
-                'shift': row[today]
-        })
+        column_index = all_data_df.columns.get_loc(today_str)
+
+        names = []
+        contacts = []
+
+        for index, row in all_data_df.iterrows():
+            shift_value = str(row.iloc[column_index])
+            if shift_value == 'nan':
+                continue
+            mapped_shift = shift_labels.get(shift_value, None)
+            if mapped_shift == shift:
+                names.append(row['Name'])
+                contacts.append(row['Contact Number'])
+
+        # Add static escalation values for all rows
+        first_escalations = [first_escalation] * len(names)
+        second_escalations = [second_escalation] * len(names)
+        third_escalations = [third_escalation] * len(names)
+
+        teams = list(zip(names, contacts, first_escalations, second_escalations, third_escalations))
     else:
-        print(f"No data for {today}")
+        messages.info(request, f"No data for {today_str}")
         teams = []
 
     return render(request, 'oncall.html', {'teams': teams})
