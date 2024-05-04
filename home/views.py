@@ -53,7 +53,7 @@ def oncall(request, message=''):
 
     if today_str in all_data_df.columns:
         if request.method == 'POST':
-            shift = request.POST.get('shift', 'Morning')  # Default to Morning if no shift selected
+            shift = request.POST.get('shift', '')  # Default to Morning if no shift selected
         else:
             shift = "Morning"  # Default to Morning if no shift selected
 
