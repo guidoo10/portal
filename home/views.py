@@ -51,7 +51,7 @@ def oncall(request):
         '7 AM - 4 PM': 'Morning',
         '9 AM - 6 PM': 'General',
         '1 PM - 10 PM': 'Evening',
-        '9 AM - 9 AM': 'Oncall'
+        '9 AM - 9 AM': 'OnCall'
     }
 
     # Map names to their respective teams
@@ -112,7 +112,6 @@ def oncall(request):
     selected_shift = request.POST.get('shift', '') if request.method == 'POST' else ''
 
     return render(request, 'oncall.html', {'team_lists': team_lists, 'selected_shift': selected_shift})
-
 
 def upload_file(request):
     if request.method == 'POST':
