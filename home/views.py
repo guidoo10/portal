@@ -55,7 +55,7 @@ def oncall(request, message=''):
         if request.method == 'POST':
             shift = request.POST.get('shift', '')  # Default to Morning if no shift selected
         else:
-            shift = "Morning"  # Default to Morning if no shift selected
+            shift = ""  # Default to Morning if no shift selected
 
         print("Selected shift:", shift)  # Debugging statement
 
