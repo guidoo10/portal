@@ -5,6 +5,7 @@
 
 {% block body %}
 <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+<link href="{% static 'css/style.css' %}" rel="stylesheet">
 <style>
     body {
         background: url({% static 'backgroud.jpg' %}) no-repeat center center fixed; 
@@ -56,7 +57,6 @@
     }
     .upload-section {
         padding: 10px;
-        margin-bottom: 20px;
     }
     
     .upload-section .form-inline {
@@ -86,21 +86,110 @@
       min-width: 35%;
       right: 10px;
     }
+
+    .oncall-wrapper {
+      background-color: #fff;
+      min-height: calc(100vh - 63px);
+    }
+
+    .card {
+      /* box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.15); */
+      border: none;
+    }
+
+    .card-header {
+      background-color: #03a7d3;
+      color: #fff;
+      box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.15);
+      border: solid 1px #03a7d3;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-header > h2 {margin: 0;}
+    .card-body {
+      border-width: 0 1px 1px 1px;
+      border-color: #ece9e9;
+      border-style: solid;
+      border-radius: 0 0 4px 4px;
+      padding-top: 35px;
+      padding-bottom: 35px;
+    }
+
+    .card-header form {
+      display: flex;
+      align-items: center;
+      justify-content: end;
+    }
+
+    .card-header form label {
+      font-weight: 600;
+      padding-top: 4px;
+      margin-right: 10px;
+    }
+
+    .card-header .custom-select {border-color: #03a7d3;}
+    .card-header .btn {
+      background-color: #ff4646;
+      border-color: #ff4646;
+      font-weight: 500;
+    }
+
+    .card-body > div {
+      margin-bottom: 65px !important;
+    }
+
+    .card-body > div > h3 {
+      margin-bottom: 15px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .oncall-wrapper header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 50px !important;
+      margin-top: 25px;
+    }
+
+    .upload-section, .upload-section .form-group {
+      display: flex;
+      align-items: center;
+    }
+
+    header .upload-section label {
+      font-weight: 500;
+      margin-right: 10px;
+    }
+
+    header .upload-section .custom-select {
+      width: auto;
+      padding-left: 0;
+      height: inherit;
+      border-radius: 4px;
+    }
+
+    header #file-upload-button {
+      background-color: #03a7d3 !important;
+    }
 </style>
 
-<div class="container py-5">
+<div class="oncall-wrapper">
+  <div class="container py-5">
     <header class="mb-4">
-        <h1 class="text-center mb-3">Roster Chat</h1>
-        <div class="upload-section d-flex justify-content-end">
-            <form method="post" action="{% url 'upload_file' %}" class="form-inline" aria-label="Upload Form" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="form-group mr-2">
-                    <label for="document" class="mr-2">Upload:</label>
-                    <input type="file" id="document" name="myfile" class="custom-select mr-2">
-                </div>
-                <button type="submit" class="custom-button">Upload</button>
-            </form>
-        </div>
+      <h1 class="text-center">Roster Chat</h1>
+      <div class="upload-section d-flex justify-content-end">
+        <form method="post" action="{% url 'upload_file' %}" class="form-inline" aria-label="Upload Form" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group mr-2">
+            <!-- <label for="document" class="mr-2">Upload:</label> -->
+            <input type="file" id="document" name="myfile" class="custom-select mr-2">
+          </div>
+          <button type="submit" class="custom-button">Upload</button>
+        </form>
+      </div>
     </header>
 
     {% for message in messages %}
@@ -110,51 +199,52 @@
     {% endfor %}
 
     <div class="card mb-4">
-        <div class="card-header">
-            <h2>On-Call Information</h2>
+      <div class="card-header">
+        <h2>On-Call Information</h2>
+        <form method="post">
+          {% csrf_token %}
+          <label for="shift">Select Shift:</label>
+          <select id="shift" name="shift" class="custom-select">
+            <option value="Morning" {% if selected_shift == 'Morning' %} selected {% endif %}>Morning</option>
+            <option value="General" {% if selected_shift == 'General' %} selected {% endif %}>General</option>
+            <option value="Evening" {% if selected_shift == 'Evening' %} selected {% endif %}>Evening</option>
+            <option value="OnCall" {% if selected_shift == 'OnCall' %} selected {% endif %}>On Call</option>
+          </select>
+          <button type="submit" class="btn btn-primary">View Shift</button>
+        </form>
+      </div>
+      <div class="card-body">
+        {% for team_list in team_lists %}
+        <div class="mb-4">
+          <h3>{{ team_list.team }}</h3>
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Contact</th>
+                <th>First Escalation</th>
+                <th>Second Escalation</th>
+                <th>Third Escalation</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for member in team_list.members %}
+              <tr>
+                <td>{{ member.name }}</td>
+                <td>{{ member.contact }}</td>
+                <td>{{ member.first_escalation }}</td>
+                <td>{{ member.second_escalation }}</td>
+                <td>{{ member.third_escalation }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
-        <div class="card-body">
-            <form method="post">
-                {% csrf_token %}
-                <label for="shift">Select Shift:</label>
-                <select id="shift" name="shift" class="custom-select">
-                    <option value="Morning" {% if selected_shift == 'Morning' %} selected {% endif %}>Morning</option>
-                    <option value="General" {% if selected_shift == 'General' %} selected {% endif %}>General</option>
-                    <option value="Evening" {% if selected_shift == 'Evening' %} selected {% endif %}>Evening</option>
-                    <option value="OnCall" {% if selected_shift == 'OnCall' %} selected {% endif %}>On Call</option>
-                </select>
-                <button type="submit" class="btn btn-primary">View Shift</button>
-            </form>
-
-            {% for team_list in team_lists %}
-            <h3>{{ team_list.team }}</h3>
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Contact</th>
-                        <th>First Escalation</th>
-                        <th>Second Escalation</th>
-                        <th>Third Escalation</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for member in team_list.members %}
-                    <tr>
-                        <td>{{ member.name }}</td>
-                        <td>{{ member.contact }}</td>
-                        <td>{{ member.first_escalation }}</td>
-                        <td>{{ member.second_escalation }}</td>
-                        <td>{{ member.third_escalation }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% endfor %}
-        </div>
+        {% endfor %}
+      </div>
     </div>
+  </div>
 </div>
-
 
 
   <!-- jQuery -->
