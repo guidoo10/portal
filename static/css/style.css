@@ -1,8 +1,5 @@
 body {
-  font-family: "Roboto", sans-serif;
-  color: #0c0c0c;
-  background-color: #f8f8f8;
-  overflow-x: hidden;
+  font-family: "Ubuntu Sans", sans-serif !important;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -20,6 +17,7 @@ body {
   padding: 3px 5px;
   margin: 10px;
   text-transform: capitalize;
+  font-weight: 600;
 }
 
 .header_section .navbar-expand-lg .navbar-nav {
@@ -31,6 +29,7 @@ body {
 .header_section .logout-btn,
 .header_section .logout-btn:hover {
   color: #fff;
+  font-weight: 600;
 }
 /* header css ends */
 
