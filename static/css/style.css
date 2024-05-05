@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Ubuntu Sans';
+  src: url({% static 'fonts/UbuntuSans-VariableFont.ttf' %});
+}
+
 body {
   font-family: "Ubuntu Sans", sans-serif !important;
   -webkit-font-smoothing: antialiased;
