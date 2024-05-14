@@ -209,6 +209,7 @@
             <option value="General" {% if selected_shift == 'General' %} selected {% endif %}>General</option>
             <option value="Evening" {% if selected_shift == 'Evening' %} selected {% endif %}>Evening</option>
             <option value="OnCall" {% if selected_shift == 'OnCall' %} selected {% endif %}>On Call</option>
+            <option value="Week" {% if selected_shift == 'Week' %} selected {% endif %}>Week</option> <!-- Added Week option -->
           </select>
           <button type="submit" class="btn btn-primary">View Shift</button>
         </form>
@@ -216,32 +217,44 @@
       <div class="card-body">
         {% for team_list in team_lists %}
         <div class="mb-4">
-          <h3>{{ team_list.team }}</h3>
-          <table class="table table-striped table-hover">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Contact</th>
-                <th>First Escalation</th>
-                <th>Second Escalation</th>
-                <th>Third Escalation</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for member in team_list.members %}
-              <tr>
-                <td>{{ member.name }}</td>
-                <td>{{ member.contact }}</td>
-                <td>{{ member.first_escalation }}</td>
-                <td>{{ member.second_escalation }}</td>
-                <td>{{ member.third_escalation }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+            <h3>{{ team_list.team }}</h3>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Contact</th>
+                        {% if selected_shift == 'Week' %}
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Shift</th>
+                        {% else %}
+                            <th>First Escalation</th>
+                            <th>Second Escalation</th>
+                            <th>Third Escalation</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for member in team_list.members %}
+                    <tr>
+                        <td>{{ member.name }}</td>
+                        <td>{{ member.contact }}</td>
+                        {% if selected_shift == 'Week' %}
+                            <td>{{ member.start_date }}</td>
+                            <td>{{ member.end_date }}</td>
+                            <td>{{ member.shift }}</td>
+                        {% else %}
+                            <td>{{ member.first_escalation }}</td>
+                            <td>{{ member.second_escalation }}</td>
+                            <td>{{ member.third_escalation }}</td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
         {% endfor %}
-      </div>
+    </div>
     </div>
   </div>
 </div>
